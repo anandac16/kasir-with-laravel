@@ -7,11 +7,13 @@ Use App\Models\User;
 
 class UserController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('isLogin');
+    }
 
     public function profile(Request $request)
     {
-        if(!Session()->get('username')) return redirect('/login')->with('alert', 'Silahkan login terlebih dahulu!');
-        
         $data = array(
             'title' => 'Dashboard',
             'username' => $request->session()->get('username'),

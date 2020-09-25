@@ -12,7 +12,9 @@
     <link rel="stylesheet" href="{{ URL::asset('assets/vendor/@fortawesome/fontawesome-free/css/all.min.css') }}" type="text/css">
     <!-- Argon CSS -->
     <link rel="stylesheet" href="{{ URL::asset('assets/css/argon.css?v=1.2.0') }}" type="text/css">
+    <script src="{{ URL::asset('assets/vendor/jquery/dist/jquery.min.js') }}"></script>
     <title>AChan - @yield('title')</title>
+    @yield('custom_head')
 </head>
 
 <body>
@@ -31,44 +33,44 @@
          <!-- Nav items -->
          <ul class="navbar-nav">
            <li class="nav-item">
-             <a class="nav-link active" href="/">
+             <a class="nav-link @yield('is_dashboard_active')" href="/">
                <i class="ni ni-tv-2 text-primary"></i>
                <span class="nav-link-text">Dashboard</span>
              </a>
            </li>
            <li class="nav-item">
-             <a class="nav-link" href="/user/profile">
+             <a class="nav-link @yield('is_profile_active')" href="/user/profile">
                <i class="ni ni-single-02 text-yellow"></i>
                <span class="nav-link-text">Profile</span>
              </a>
            </li>
            <li class="nav-item">
-             <a class="nav-link" href="map.html">
+             <a class="nav-link @yield('is_supplier_active')" href="map.html">
                <i class="ni ni-delivery-fast text-primary"></i>
                <span class="nav-link-text">Supplier</span>
              </a>
            </li>
            <li class="nav-item">
-             <a class="nav-link" href="tables.html">
+             <a class="nav-link @yield('is_member_active')" href="tables.html">
                <i class="ni ni-circle-08 text-default"></i>
                <span class="nav-link-text">Member</span>
              </a>
            </li>
            <li class="nav-item">
-             <a class="nav-link" href="/inventory">
+             <a class="nav-link @yield('is_product_active')" href="/inventory">
                <i class="ni ni-box-2 text-info"></i>
                <span class="nav-link-text">Product</span>
              </a>
            </li>
            <li class="nav-item">
-             <a class="nav-link" href="register.html">
+             <a class="nav-link @yield('is_transaction_active')" href="register.html">
                <i class="ni ni-cart text-pink"></i>
                <span class="nav-link-text">Transaction</span>
              </a>
            </li>
            @if ($role === 1)
            <li class="nav-item">
-             <a class="nav-link" href="#" data-toggle="collapse" data-target="#submenu1">
+             <a class="nav-link @yield('is_report_active')" href="#" data-toggle="collapse" data-target="#submenu1">
                <i class="ni ni-chart-bar-32 text-dark"></i>
                <span class="nav-link-text">Reports</span>
              </a>
@@ -352,7 +354,6 @@
  </div>
  <!-- Argon Scripts -->
  <!-- Core -->
- <script src="{{ URL::asset('assets/vendor/jquery/dist/jquery.min.js') }}"></script>
  <script src="{{ URL::asset('assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
  <script src="{{ URL::asset('assets/vendor/js-cookie/js.cookie.js') }}"></script>
  <script src="{{ URL::asset('assets/vendor/jquery.scrollbar/jquery.scrollbar.min.js') }}"></script>

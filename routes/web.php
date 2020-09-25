@@ -20,3 +20,4 @@ Route::get('/user/profile', [UserController::class, 'profile']);
 
 // inventory
 Route::get('/inventory', [InventoryController::class, 'index']);
+Route::post('/inventory/add', [InventoryController::class, 'add']);

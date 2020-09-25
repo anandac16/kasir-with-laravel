@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 
 @section('title', 'AChan - Profile')
-
+@section('is_profile_active', 'active')
 @section('content')
     <div class="header pb-6 d-flex align-items-center"
         style="min-height: 500px; background-image: url(../assets/img/theme/profile-cover.jpg); background-size: cover; background-position: center top;">

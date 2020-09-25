@@ -7,11 +7,13 @@ use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
-    
+    public function __construct()
+    {
+        $this->middleware('isLogin');
+    }
+
     public function index()
     {
-        if(!Session()->get('username')) return redirect('/login')->with('alert', 'Silahkan login terlebih dahulu!');
-        
         $data = array(
             'title' => 'Dashboard',
             'username' => Session()->get('username'),

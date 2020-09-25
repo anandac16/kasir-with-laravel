@@ -10,6 +10,7 @@ class Inventory extends Model
 {
     use HasFactory;
     protected $table = 'inventory';
+    public $timestamps = false;
 
     public static function getList()
     {
@@ -20,5 +21,10 @@ class Inventory extends Model
                 ->paginate(5);
 
         return $data;
+    }
+
+    public static function isExist($column, $value)
+    {
+        return DB::table('inventory')->where($column, $value)->exists();
     }
 }

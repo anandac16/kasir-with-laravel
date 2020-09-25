@@ -8,9 +8,9 @@ use Illuminate\Support\Facades\Hash;
 
 class LoginController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        if ($request->session()->exists('credential_key')) 
+        if (Session()->exists('credential_key')) 
             return redirect('/');
         return view('login/index');
     }

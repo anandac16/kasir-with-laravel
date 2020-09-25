@@ -1,6 +1,7 @@
 @extends('layouts.dashboard')
 
 @section('title', $title)
+@section('is_dashboard_active', 'active')
 @section('content')
     <!-- Header -->
     <div class="header bg-primary pb-6">
