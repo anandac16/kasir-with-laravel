@@ -1,23 +1,20 @@
 @extends('layouts.dashboard')
 @section('custom_head')
     <meta name="csrf-token" content="{{ csrf_token() }}" />
-    <script src="{{ URL::asset('assets/js/qrcodelib.js') }}"></script>
-    <script src="{{ URL::asset('assets/js/webcodecamjs.js') }}"></script>
-    <script src="{{ URL::asset('assets/js/webcodecamjquery.js') }}"></script>
-    <script src="{{ URL::asset('assets/js/jquery.js') }}"></script>
-    <script src="{{ URL::asset('assets/js/datatables.min.js') }}"></script>
+    <link href="{{ URL::asset('assets/vendor/select2/dist/css/select2.min.css') }}" rel="stylesheet" />
+    <script src="{{ URL::asset('assets/vendor/select2/dist/js/select2.min.js') }}"></script>
     <style>
         .w-90 {
             width: 90% !important;
         }
-        canvas {
-            display: none;
+        .select2.select2-container {
+            width: 90% !important;
         }
     </style>
 @endsection
 
-@section('title', 'AChan - Inventory')
-@section('is_product_active', 'active')
+@section('title', $title)
+@section('is_unit_active', 'active')
 
 @section('content')
     <div class="header bg-primary pb-6">
@@ -50,11 +47,11 @@
                     <!-- Card header -->
                     <div class="card-header border-0 form-inline">
                         <div class="col-lg-6">
-                            <h3 class="mb-0">Inventory</h3>
+                            <h3 class="mb-0">{{ $title }}</h3>
                         </div>
                         <div class="col-lg-6 text-right">
                             <button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" id="add_btn"
-                                onclick="clearForm()">Add Item</button>
+                                onclick="clearForm()">Add Stock</button>
                         </div>
                     </div>
                     <!-- Modal add inventory -->
@@ -63,7 +60,7 @@
                         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Inventory</h5>
+                                    <h5 class="modal-title" id="exampleModalLabel">{{ $title }}</h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -72,54 +69,42 @@
                                     <div class="alert alert-dismissible fade" role="alert" id="message">
 
                                     </div>
-                                    <form action="/inventory/save" method="post" name="inv_form" id="inv_form">
+                                    <form action="/unit/save" method="post" name="inv_form" id="inv_form">
                                         <div class="form-group form-inline">
-                                            <input type="hidden" name="id_inventory" id="id_inventory" value="0">
-                                            <div class="col-lg-4 text-right">Item Code / Barcode</div>
+                                            <input type="hidden" name="id_stock" id="id_stock" value="0">
+                                            <div class="col-lg-4 text-right">Item Name</div>
                                             <div class="col-lg-8">
-                                                <input type="text" name="item_code" id="item_code"
-                                                    class="form-control w-90" required>
-                                                <li class="fas fa-barcode" id="scan"></li>
-                                                <canvas></canvas>
+                                                <select name="id_inventory" id="id_inventory" class="select2">
+                                                    @foreach ($inventory as $inv)
+                                                        <option value="{{ $inv->id_inventory }}">{{ $inv->item_name }}</option>
+                                                    @endforeach
+                                                </select>
                                             </div>
                                         </div>
                                         <div class="form-group form-inline">
-                                            <div class="col-lg-4 text-right">Item Name</div>
-                                            <div class="col-lg-8"><input type="text" name="item_name" id="item_name"
-                                                    class="form-control w-90" required></div>
-                                        </div>
-                                        <div class="form-group form-inline">
-                                            <div class="col-lg-4 text-right">Price Buy</div>
-                                            <div class="col-lg-8"><input type="number" name="price_buy" id="price_buy"
-                                                    class="form-control w-90 text-right" value="0" min="0"></div>
-                                        </div>
-                                        <div class="form-group form-inline">
-                                            <div class="col-lg-4 text-right">Price Sell</div>
-                                            <div class="col-lg-8"><input type="number" name="price_sell" id="price_sell"
-                                                    class="form-control w-90 text-right" value="0" min="0"></div>
+                                            <div class="col-lg-4 text-right">Stock</div>
+                                            <div class="col-lg-8"><input type="number" name="stock" id="stock" class="form-control text-right"></div>
                                         </div>
                                         <div class="form-group form-inline">
                                             <div class="col-lg-4 text-right">Unit</div>
                                             <div class="col-lg-8">
-                                                <select name="id_unit" id="id_unit" class="form-control">
-                                                    @foreach ($unit as $val)
-                                                        <option value="{{ $val->id_unit }}">{{ $val->unit }}
-                                                        </option>
+                                                <select name="id_unit" id="id_unit" class="select2">
+                                                    @foreach ($unit as $unit)
+                                                        <option value="{{ $unit->id_unit }}">{{ $unit->unit }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
                                         </div>
                                         <div class="form-group form-inline">
-                                            <div class="col-lg-4 text-right">Category</div>
-                                            <div class="col-lg-8">
-                                                <select name="id_category" id="id_category" class="form-control">
-                                                    @foreach ($category as $val)
-                                                        <option value="{{ $val->id_category }}">{{ $val->category }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
+                                          <div class="col-lg-4 text-right">Supplier</div>
+                                          <div class="col-lg-8">
+                                              <select name="id_supplier" id="id_supplier" class="select2">
+                                                  @foreach ($supplier as $sup)
+                                                      <option value="{{ $sup->id_supplier }}">{{ $sup->nama }}</option>
+                                                  @endforeach
+                                              </select>
+                                          </div>
+                                      </div>
                                     </form>
                                 </div>
                                 <div class="modal-footer">
@@ -132,42 +117,34 @@
                     </div>
                     <!-- Light table -->
                     <div class="table-responsive">
-                        <table class="table align-items-center table-flush" id="myTable">
+                        <table class="table align-items-center table-flush">
                             <thead class="thead-light">
                                 <tr>
-                                    <th scope="col" class="sort" data-sort="item_code">Item Code / Barcode</th>
+                                    <th scope="col" class="sort" data-sort="id">No</th>
+                                    <th scope="col" class="sort" data-sort="supplier">Supplier</th>
                                     <th scope="col" class="sort" data-sort="item_name">Item Name</th>
-                                    <th scope="col" class="sort text-center" data-sort="stock">Stock</th>
-                                    <th scope="col" class="sort text-center" data-sort="unit">Unit</th>
-                                    <th scope="col" class="sort text-center" data-sort="price_buy">Price Buy</th>
-                                    <th scope="col" class="sort text-center" data-sort="price_sell">Price Sell</th>
-                                    <th scope="col" class="sort text-center" data-sort="category">Category</th>
+                                    <th scope="col" class="sort" data-sort="stock">Stock</th>
+                                    <th scope="col" class="sort" data-sort="unit">Unit</th>
                                     <th scope="col" width="5%">Action</th>
                                 </tr>
                             </thead>
                             <tbody class="list">
-                                @foreach ($data as $item)
+                                @foreach ($data as $key => $list)
                                     <tr>
                                         <td>
-                                            {{ $item->item_code }}
+                                            {{ $key + 1 }}
                                         </td>
                                         <td>
-                                            {{ $item->item_name }}
+                                            {{ $list->nama }}
                                         </td>
-                                        <td align="right">
-                                            {{ number_format($item->stock) }}
+                                        <td>
+                                            {{ $list->item_name }}
                                         </td>
-                                        <td align="center">
-                                            {{ $item->unit }}
+                                        <td>
+                                            {{ number_format($list->stock) }}
                                         </td>
-                                        <td align="right">
-                                            {{ number_format($item->price_buy, 2) }}
-                                        </td>
-                                        <td align="right">
-                                            {{ number_format($item->price_sell, 2) }}
-                                        </td>
-                                        <td align="center">
-                                            {{ $item->category }}
+                                        <td>
+                                            {{ $list->unit }}
                                         </td>
                                         <td class="text-right">
                                             <div class="dropdown">
@@ -176,11 +153,12 @@
                                                     <i class="fas fa-ellipsis-v"></i>
                                                 </a>
                                                 <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
-                                                    <a class="dropdown-item" onclick="edit({{ $item->id_inventory }})"
-                                                        data-id="{{ $item->id_inventory }}">Edit</a>
+                                                    <a class="dropdown-item"
+                                                        onclick="edit({{ $list->id_stock }}, '{{ $list->id_supplier }}', '{{ $list->id_inventory }}', '{{ $list->stock }}', '{{ $list->id_unit }}')"
+                                                        data-id="{{ $list->id_stock }}">Edit</a>
                                                     <a class="dropdown-item" href="#"
-                                                        onclick="deleteItem({{ $item->id_inventory }})"
-                                                        data-id="{{ $item->id_inventory }}">Delete</a>
+                                                        onclick="deleteStock({{ $list->id_stock }})"
+                                                        data-id="{{ $list->id_stock }}">Delete</a>
                                                 </div>
                                             </div>
                                         </td>
@@ -196,23 +174,21 @@
                 </div>
             </div>
         </div>
-        <script type="text/javascript">
+        <script>
             $(document).ready(function() {
-                $("#message").hide();
-                $("#scan").click(function() {
-                    $("canvas").removeAttr('style');
-                    var txt = "innerText" in HTMLElement.prototype ? "innerText" : "textContent";
-                    var arg = {
-                        resultFunction: function(result) {
-                            $("#item_code").val(result.code)
-                            $("canvas").css("display: none");
-                        }
-                    };
-                    new WebCodeCamJS("canvas").init(arg).play();
-                })
-            })
-
+                $('.select2').select2();
+            });
+            $("#message").hide();
             const csrf_token = document.querySelector('meta[name="csrf-token"]').content;
+
+            function edit(id, id_supplier, id_inventory, stock, id_unit) {
+                $("#id_stock").val(id);
+                $("#id_supplier").val(id_supplier);
+                $("#id_inventory").val(id_inventory);
+                $("#stock").val(stock);
+                $("#id_unit").val(id_unit);
+                $("#exampleModal").modal('show');
+            }
 
             function save() {
                 let elements = document.getElementById("inv_form").elements;
@@ -223,7 +199,7 @@
                     obj[item.name] = item.value;
                 }
 
-                xhttp.open("POST", "/inventory/save", true);
+                xhttp.open("POST", "/stock/save", true);
                 xhttp.setRequestHeader("X-CSRF-TOKEN", csrf_token);
                 xhttp.send(JSON.stringify(obj));
 
@@ -241,44 +217,20 @@
                             $("#message").removeAttr("style");
                             $(".alert").fadeTo(3000, 0).slideUp(1000);
                             if (json_data.result === true)
-                                window.open('/inventory', '_self')
+                                window.open('/stock', '_self')
                         }
                     }
                 };
             }
 
-            function edit(id) {
-                $.ajax({
-                    type: 'POST',
-                    url: '/inventory/find',
-                    data: {
-                        id_inventory: id
-                    },
-                    dataType: 'JSON',
-                    headers: {
-                        'X-CSRF-TOKEN': csrf_token
-                    },
-                    success: function(res) {
-                        $("#id_inventory").val(res.id_inventory);
-                        $("#item_code").val(res.item_code);
-                        $("#item_name").val(res.item_name);
-                        $("#price_buy").val(res.price_buy);
-                        $("#price_sell").val(res.price_sell);
-                        $("#id_unit").val(res.id_unit).change();
-                        $("#id_category").val(res.id_category).change();
-                        $("#exampleModal").modal('show');
-                    }
-                })
-            }
-
-            function deleteItem(id) {
-                let areusure = confirm('Are you sure want to delete this item?');
+            function deleteStock(id) {
+                let areusure = confirm('Are you sure want to delete this?');
                 if (areusure === true) {
                     $.ajax({
                         type: 'POST',
-                        url: '/inventory/delete',
+                        url: 'stock/delete',
                         data: {
-                            id_inventory: id
+                            id_stock: id
                         },
                         dataType: 'JSON',
                         headers: {
@@ -288,14 +240,10 @@
                             // console.log(res)
                             alert(res.message)
                             if (res.result === true)
-                                window.open('/inventory', '_self')
+                                window.open('/stock', '_self')
                         }
                     })
                 }
-            }
-
-            function clearForm() {
-                $("#inv_form").trigger('reset');
             }
 
         </script>

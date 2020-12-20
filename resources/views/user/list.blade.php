@@ -1,23 +1,16 @@
 @extends('layouts.dashboard')
 @section('custom_head')
     <meta name="csrf-token" content="{{ csrf_token() }}" />
-    <script src="{{ URL::asset('assets/js/qrcodelib.js') }}"></script>
-    <script src="{{ URL::asset('assets/js/webcodecamjs.js') }}"></script>
-    <script src="{{ URL::asset('assets/js/webcodecamjquery.js') }}"></script>
-    <script src="{{ URL::asset('assets/js/jquery.js') }}"></script>
-    <script src="{{ URL::asset('assets/js/datatables.min.js') }}"></script>
     <style>
         .w-90 {
             width: 90% !important;
         }
-        canvas {
-            display: none;
-        }
+
     </style>
 @endsection
 
-@section('title', 'AChan - Inventory')
-@section('is_product_active', 'active')
+@section('title', $title)
+@section('is_user_list_active', 'active')
 
 @section('content')
     <div class="header bg-primary pb-6">
@@ -50,11 +43,11 @@
                     <!-- Card header -->
                     <div class="card-header border-0 form-inline">
                         <div class="col-lg-6">
-                            <h3 class="mb-0">Inventory</h3>
+                            <h3 class="mb-0">{{ $title }}</h3>
                         </div>
                         <div class="col-lg-6 text-right">
                             <button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" id="add_btn"
-                                onclick="clearForm()">Add Item</button>
+                                onclick="clearForm()">Add User</button>
                         </div>
                     </div>
                     <!-- Modal add inventory -->
@@ -63,7 +56,7 @@
                         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Inventory</h5>
+                                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -74,47 +67,37 @@
                                     </div>
                                     <form action="/inventory/save" method="post" name="inv_form" id="inv_form">
                                         <div class="form-group form-inline">
-                                            <input type="hidden" name="id_inventory" id="id_inventory" value="0">
-                                            <div class="col-lg-4 text-right">Item Code / Barcode</div>
-                                            <div class="col-lg-8">
-                                                <input type="text" name="item_code" id="item_code"
-                                                    class="form-control w-90" required>
-                                                <li class="fas fa-barcode" id="scan"></li>
-                                                <canvas></canvas>
-                                            </div>
-                                        </div>
-                                        <div class="form-group form-inline">
-                                            <div class="col-lg-4 text-right">Item Name</div>
-                                            <div class="col-lg-8"><input type="text" name="item_name" id="item_name"
+                                            <input type="hidden" name="id_user" id="id_user" value="0">
+                                            <div class="col-lg-4 text-right">First Name</div>
+                                            <div class="col-lg-8"><input type="text" name="first_name" id="first_name"
                                                     class="form-control w-90" required></div>
                                         </div>
                                         <div class="form-group form-inline">
-                                            <div class="col-lg-4 text-right">Price Buy</div>
-                                            <div class="col-lg-8"><input type="number" name="price_buy" id="price_buy"
-                                                    class="form-control w-90 text-right" value="0" min="0"></div>
+                                            <div class="col-lg-4 text-right">Last Name</div>
+                                            <div class="col-lg-8"><input type="text" name="last_name" id="last_name"
+                                                    class="form-control w-90" required></div>
                                         </div>
                                         <div class="form-group form-inline">
-                                            <div class="col-lg-4 text-right">Price Sell</div>
-                                            <div class="col-lg-8"><input type="number" name="price_sell" id="price_sell"
-                                                    class="form-control w-90 text-right" value="0" min="0"></div>
+                                            <div class="col-lg-4 text-right">Username</div>
+                                            <div class="col-lg-8"><input type="text" name="username" id="username"
+                                                    class="form-control w-90" required></div>
                                         </div>
                                         <div class="form-group form-inline">
-                                            <div class="col-lg-4 text-right">Unit</div>
+                                            <div class="col-lg-4 text-right">Password</div>
+                                            <div class="col-lg-8"><input type="password" name="password" id="password"
+                                                    class="form-control w-90" placeholder="*********************" required></div>
+                                        </div>
+                                        <div class="form-group form-inline">
+                                            <div class="col-lg-4 text-right">Email</div>
+                                            <div class="col-lg-8"><input type="text" name="email" id="email"
+                                                    class="form-control w-90" required></div>
+                                        </div>
+                                        <div class="form-group form-inline">
+                                            <div class="col-lg-4 text-right">Role</div>
                                             <div class="col-lg-8">
-                                                <select name="id_unit" id="id_unit" class="form-control">
-                                                    @foreach ($unit as $val)
-                                                        <option value="{{ $val->id_unit }}">{{ $val->unit }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="form-group form-inline">
-                                            <div class="col-lg-4 text-right">Category</div>
-                                            <div class="col-lg-8">
-                                                <select name="id_category" id="id_category" class="form-control">
-                                                    @foreach ($category as $val)
-                                                        <option value="{{ $val->id_category }}">{{ $val->category }}
+                                                <select name="id_role" id="id_role" class="form-control">
+                                                    @foreach ($roles as $role)
+                                                        <option value="{{ $role->id_role }}">{{ $role->role_name }}
                                                         </option>
                                                     @endforeach
                                                 </select>
@@ -132,42 +115,30 @@
                     </div>
                     <!-- Light table -->
                     <div class="table-responsive">
-                        <table class="table align-items-center table-flush" id="myTable">
+                        <table class="table align-items-center table-flush">
                             <thead class="thead-light">
                                 <tr>
-                                    <th scope="col" class="sort" data-sort="item_code">Item Code / Barcode</th>
-                                    <th scope="col" class="sort" data-sort="item_name">Item Name</th>
-                                    <th scope="col" class="sort text-center" data-sort="stock">Stock</th>
-                                    <th scope="col" class="sort text-center" data-sort="unit">Unit</th>
-                                    <th scope="col" class="sort text-center" data-sort="price_buy">Price Buy</th>
-                                    <th scope="col" class="sort text-center" data-sort="price_sell">Price Sell</th>
-                                    <th scope="col" class="sort text-center" data-sort="category">Category</th>
+                                    <th scope="col" class="sort" data-sort="username">Username</th>
+                                    <th scope="col" class="sort" data-sort="full_name">Full Name</th>
+                                    <th scope="col" class="sort" data-sort="email">email</th>
+                                    <th scope="col" class="sort" data-sort="id_role">Role</th>
                                     <th scope="col" width="5%">Action</th>
                                 </tr>
                             </thead>
                             <tbody class="list">
-                                @foreach ($data as $item)
+                                @foreach ($data as $user)
                                     <tr>
                                         <td>
-                                            {{ $item->item_code }}
+                                            {{ $user->username }}
                                         </td>
                                         <td>
-                                            {{ $item->item_name }}
+                                            {{ $user->first_name .' '. $user->last_name }}
                                         </td>
-                                        <td align="right">
-                                            {{ number_format($item->stock) }}
+                                        <td>
+                                            {{ $user->email }}
                                         </td>
-                                        <td align="center">
-                                            {{ $item->unit }}
-                                        </td>
-                                        <td align="right">
-                                            {{ number_format($item->price_buy, 2) }}
-                                        </td>
-                                        <td align="right">
-                                            {{ number_format($item->price_sell, 2) }}
-                                        </td>
-                                        <td align="center">
-                                            {{ $item->category }}
+                                        <td>
+                                            {{ $user->role_name }}
                                         </td>
                                         <td class="text-right">
                                             <div class="dropdown">
@@ -176,11 +147,11 @@
                                                     <i class="fas fa-ellipsis-v"></i>
                                                 </a>
                                                 <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
-                                                    <a class="dropdown-item" onclick="edit({{ $item->id_inventory }})"
-                                                        data-id="{{ $item->id_inventory }}">Edit</a>
+                                                    <a class="dropdown-item" onclick="edit({{ $user->id_user }})"
+                                                        data-id="{{ $user->id_user }}">Edit</a>
                                                     <a class="dropdown-item" href="#"
-                                                        onclick="deleteItem({{ $item->id_inventory }})"
-                                                        data-id="{{ $item->id_inventory }}">Delete</a>
+                                                        onclick="deleteItem({{ $user->id_user }})"
+                                                        data-id="{{ $user->id_user }}">Delete</a>
                                                 </div>
                                             </div>
                                         </td>
@@ -199,17 +170,6 @@
         <script type="text/javascript">
             $(document).ready(function() {
                 $("#message").hide();
-                $("#scan").click(function() {
-                    $("canvas").removeAttr('style');
-                    var txt = "innerText" in HTMLElement.prototype ? "innerText" : "textContent";
-                    var arg = {
-                        resultFunction: function(result) {
-                            $("#item_code").val(result.code)
-                            $("canvas").css("display: none");
-                        }
-                    };
-                    new WebCodeCamJS("canvas").init(arg).play();
-                })
             })
 
             const csrf_token = document.querySelector('meta[name="csrf-token"]').content;
@@ -223,7 +183,7 @@
                     obj[item.name] = item.value;
                 }
 
-                xhttp.open("POST", "/inventory/save", true);
+                xhttp.open("POST", "/user/save", true);
                 xhttp.setRequestHeader("X-CSRF-TOKEN", csrf_token);
                 xhttp.send(JSON.stringify(obj));
 
@@ -241,7 +201,7 @@
                             $("#message").removeAttr("style");
                             $(".alert").fadeTo(3000, 0).slideUp(1000);
                             if (json_data.result === true)
-                                window.open('/inventory', '_self')
+                                window.open('/user/list', '_self')
                         }
                     }
                 };
@@ -250,35 +210,33 @@
             function edit(id) {
                 $.ajax({
                     type: 'POST',
-                    url: '/inventory/find',
+                    url: '/user/find',
                     data: {
-                        id_inventory: id
+                        id_user: id
                     },
                     dataType: 'JSON',
                     headers: {
                         'X-CSRF-TOKEN': csrf_token
                     },
                     success: function(res) {
-                        $("#id_inventory").val(res.id_inventory);
-                        $("#item_code").val(res.item_code);
-                        $("#item_name").val(res.item_name);
-                        $("#price_buy").val(res.price_buy);
-                        $("#price_sell").val(res.price_sell);
-                        $("#id_unit").val(res.id_unit).change();
-                        $("#id_category").val(res.id_category).change();
+                        Object.keys(res).forEach(key => {
+                            if(key !== 'full_name')
+                                $(`#${key}`).val(res[key]);
+                                // document.getElementById(key).value = res[key];
+                        })
                         $("#exampleModal").modal('show');
                     }
                 })
             }
 
             function deleteItem(id) {
-                let areusure = confirm('Are you sure want to delete this item?');
+                let areusure = confirm('Are you sure want to delete this user?');
                 if (areusure === true) {
                     $.ajax({
                         type: 'POST',
-                        url: '/inventory/delete',
+                        url: '/user/delete',
                         data: {
-                            id_inventory: id
+                            id_user: id
                         },
                         dataType: 'JSON',
                         headers: {
@@ -288,14 +246,10 @@
                             // console.log(res)
                             alert(res.message)
                             if (res.result === true)
-                                window.open('/inventory', '_self')
+                                window.open('/user/list', '_self')
                         }
                     })
                 }
-            }
-
-            function clearForm() {
-                $("#inv_form").trigger('reset');
             }
 
         </script>

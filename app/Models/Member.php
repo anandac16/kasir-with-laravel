@@ -6,16 +6,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
-class Unit extends Model
+class Member extends Model
 {
     use HasFactory;
-    protected $table = 'unit';
-    protected $primaryKey = 'id_unit';
+    protected $table = 'member';
+    protected $primaryKey = 'id_member';
     public $timestamps = false;
 
     public static function getList()
     {
-        $data = DB::table('unit')
+        $data = DB::table('member')
                 ->select('*')
                 ->paginate(5);
 

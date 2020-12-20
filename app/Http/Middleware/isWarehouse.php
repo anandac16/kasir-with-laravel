@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 
-class isAdmin
+class isWarehouse
 {
     /**
      * Handle an incoming request.
@@ -16,7 +16,7 @@ class isAdmin
      */
     public function handle(Request $request, Closure $next)
     {
-        if($request->session()->get('id_role') !== 2){
+        if($request->session()->get('id_role') <= 0){
             return redirect('/');
         }
         return $next($request);

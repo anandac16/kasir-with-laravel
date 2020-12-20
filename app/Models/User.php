@@ -6,6 +6,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 
 class User extends Authenticatable
 {
@@ -37,4 +38,17 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public $timestamps = false;
+    protected $primaryKey = 'id_user';
+
+    public static function getList()
+    {
+        $data = DB::table('users')
+                ->leftJoin('role', 'users.id_role', 'role.id_role')
+                ->select('users.id_user', 'users.username', 'users.first_name', 'users.last_name', 'users.email', 'role.role_name')
+                ->paginate(5);
+
+        return $data;
+    }
 }
